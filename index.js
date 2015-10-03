@@ -8,6 +8,7 @@ var NUMBER  = "(732) 333-6592";
 
 app.get('/', function (req, res){
   ///Placeholder for site
+  console.log('reset');
   res.send("There's nothing here, plz help");
 });
 
@@ -18,6 +19,7 @@ app.get('/fetch', function(req, res){
 
 app.get('/messageRecieve', function(req, res){
   console.log(req.query);
+  res.send('requrest');
 });
 
 //Adds song to mongodb server
