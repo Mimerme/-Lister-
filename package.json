@@ -1,0 +1,11 @@
+{
+  "name": "HckRU",
+  "version": "0.0.0",
+  "description": "Musical Playlist generaor using twilio",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andros (Mimerme)",
+  "license": "BSD-2-Clause"
+}
