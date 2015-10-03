@@ -1,11 +1,23 @@
 var express = require('express');
 var client = require('twilio')('ACCOUNT_SID', 'AUTH_TOKEN');
+var db = require("mongodb").MongoClient;
 var app = express();
 
 
 var PORT = 3000;
 var API_KEY;
 var NUMBER  = "(732) 333-6592";
+
+//Open the connection to the database
+db.connect('mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database', function (err, db) {
+    if (err) {
+        console.log("There was a problem trying to connect to the database " +
+        "the application has bene terminated");
+        throw err;
+    } else {
+        console.log("successfully connected to the database");
+    }
+});
 
 app.get('/', function (req, res){
   ///Placeholder for site
@@ -15,6 +27,7 @@ app.get('/', function (req, res){
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
+  res.send(db.users.find( { phoneNumber: { $eq : number } } ));
 });
 
 //Adds song to mongodb server
@@ -67,6 +80,12 @@ function getSongUrl(searchTerm){
 
 function addToDatabase(number, URL){
   //Add the url with teh number to the song database
+  db.users.update({phoneNumber: { $eq: number }},
+    { $push: { songs: URL } }
+    ,{
+    upsert: true,
+    multi: false,
+  });
 }
 
 app.listen(PORT);
