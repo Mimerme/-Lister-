@@ -17,7 +17,7 @@ app.get('/fetch', function(req, res){
 });
 
 app.get('/messageRecieve', function(req, res){
-
+  console.log(req.query);
 });
 
 //Adds song to mongodb server
