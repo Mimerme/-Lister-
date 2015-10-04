@@ -59,6 +59,12 @@ app.get('/fetch', function(req, res){
   return;
 });
 
+app.all('/fetch', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
+
 //Adds song to mongodb server
 //Takes in phone number and song / search term
 app.get('/addSong', function(req, res){
