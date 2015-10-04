@@ -84,6 +84,7 @@ app.get('/addSong', function(req, res){
     getSong(lyrics, function(reply){
       if(reply == -99){
         sendMessage(number, "We weren't able to identify your song ;_;");
+        return;
       }
       sendMessage(number, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
       var s = reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", "");
