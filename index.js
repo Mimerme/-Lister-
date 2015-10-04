@@ -4,6 +4,7 @@ var customsearch = google.customsearch('v1');
 var fs = require('fs');
 
 var obj = JSON.parse(fs.readFileSync('./creds.json', 'utf8'));
+var path = require('path');
 
 TWILIO_SID = obj.TWILIO_SID;
 TWILIO_APP_ID = obj.TWILIO_APP_ID;
@@ -24,6 +25,8 @@ var PORT = 3000;
 var API_KEY;
 var NUMBER  = "+17323336592";
 
+app.use(express.static('public'));
+app.use('/static', express.static(__dirname + '/public'));
 console.log("Running deploy test " + DEPLOY_TEST);
 
 //Open the connection to the database
@@ -42,18 +45,18 @@ MongoClient.connect(MONGO_DATABASE, function (err, database) {
         //getSong("Im like hey whats up", function(){});
     }
 });
-
-app.get('/', function (req, res){
-  ///Placeholder for site
-  res.send("There's nothing here, plz help");
-});
+app.use(express.static('public'));
 
 //Allows client to fetch for the request
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
   var s;
-  db.collection('users').find({"phoneNumber": number}).forEach(function(u) {   res.send(u.songs); });
+  db.collection('users').find({"phoneNumber": "+" + number}).forEach(function(u) {
+     res.send(u.songs);
+     return;
+     });
+  return;
 });
 
 //Adds song to mongodb server
