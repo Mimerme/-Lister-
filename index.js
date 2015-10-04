@@ -69,6 +69,7 @@ app.get('/addSong', function(req, res){
     if(lyrics == null){
       sendMessage(number, "The syntax of your request was invalid");
       res.send("Reponse Finished: With Error by user");
+      return;
     }
     getSong(lyrics, function(reply){
       sendMessage(NUMBER, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
@@ -77,6 +78,7 @@ app.get('/addSong', function(req, res){
         var videoID = JSON.parse(response).items[0].id.videoId;
         addToDatabase(number, videoID);
         res.send("Reponse Finished: With Success");
+        return;
       });
     });
   }
@@ -85,6 +87,7 @@ app.get('/addSong', function(req, res){
     var videoID = JSON.parse(response).items[0].id.videoId;
     addToDatabase(number, videoID);
     res.send("Reponse Finished: With Success");
+    return;
   });
 });
 
