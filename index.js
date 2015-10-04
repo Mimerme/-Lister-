@@ -20,7 +20,7 @@ var db;
 
 //-r -D
 
-var DEPLOY_TEST = "6";
+var DEPLOY_TEST = "7";
 var PORT = 3000;
 var API_KEY;
 var NUMBER  = "+17323336592";
@@ -56,6 +56,10 @@ app.use(function(req, res, next) {
 //Allows client to fetch for the request
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
+  if(db.collection('users').find({"phoneNumber": "+" + number}).count <= 0){
+    res.send("No user");
+    return;
+  }
   var number = req.query.phoneNum;
   var s;
   db.collection('users').find({"phoneNumber": "+" + number}).forEach(function(u) {
@@ -189,6 +193,11 @@ function addToDatabase(number, URL){
   //if(db.collection('users').find({"phonenumber": {$eq: number}}, {$elemMatch: {"songs": URL}}).first() !== null){
     //return;
   //}
+
+  if(URL === null || URL === "null"){
+    console.log("Null caught");
+    return;
+  }
 
   if(db.collection('users').find({ "phoneNumber": { $eq : number } }).count() < 0){
     db.collection('users').insertOne({
