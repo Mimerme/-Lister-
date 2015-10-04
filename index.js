@@ -73,7 +73,7 @@ app.get('/addSong', function(req, res){
     }
     getSong(lyrics, function(reply){
       console.log(reply);
-      sendMessage(NUMBER, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
+      sendMessage(number, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
       getSongUrl(reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", ""),
       function(response){
         var videoID = JSON.parse(response).items[0].id.videoId;
