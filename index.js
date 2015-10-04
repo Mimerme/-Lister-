@@ -5,7 +5,7 @@ var obj = JSON.parse(fs.readFileSync('./creds.json', 'utf8'));
 
 TWILIO_SID = obj.TWILIO_SID;
 TWILIO_APP_ID = obj.TWILIO_APP_ID;
-MONGO_DATABASE = obj.MONGO_DATABSE;
+MONGO_DATABASE = obj.MONGO_DATABASE;
 YOUTUBE_API = obj.YOUTUBE_API;
 
 var express = require('express');
@@ -17,7 +17,7 @@ var db;
 
 //-r -D
 
-var DEPLOY_TEST = "4";
+var DEPLOY_TEST = "5";
 var PORT = 3000;
 var API_KEY;
 var NUMBER  = "+17323336592";
@@ -25,7 +25,7 @@ var NUMBER  = "+17323336592";
 console.log("Running deploy test " + DEPLOY_TEST);
 
 //Open the connection to the database
-MongoClient.connect(MONGO_DATABASE, function (err, database) {
+MongoClient.connect("mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database", function (err, database) {
     if (err) {
         console.log("There was a problem trying to connect to the database " +
         "the application has bene terminated");
@@ -35,7 +35,8 @@ MongoClient.connect(MONGO_DATABASE, function (err, database) {
         console.log("successfully connected to the database");
         //Simulate should crash the server, does not specify res value
         //console.log("simulating a test text");
-        simulate();
+        //simulate();
+        //console.log(db.collection('users').findOne({"phoneNumber": "+18482294098"}));
     }
 });
 
@@ -47,7 +48,8 @@ app.get('/', function (req, res){
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
-  res.send(db.collection('users').find( { "phoneNumber": { $eq : number } } ));
+  var s;
+  db.collection('users').find({"phoneNumber": "+18482294098"}).forEach(function(u) {   res.send(u.songs); });
 });
 
 //Adds song to mongodb server
@@ -98,12 +100,10 @@ function parseBody(body){
 }
 
 function getSongUrl(searchTerm, callback){
-
   console.log("searching");
   //Search for song using youtube api
-  request("https://www.googleapis.com/youtube/v3/search?part=id&q=" + searchTerm + "&type=video&key=" + YOUTUBE_API, function (error, response, body) {
+  request("https://www.googleapis.com/youtube/v3/search?part=id&q=" + "darude" + "&type=video&key=" + "AIzaSyAhsmn1-SsD12eowR4dYzY4V4TPsJsP_TI", function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(body);
       callback(body);
     }
   })
