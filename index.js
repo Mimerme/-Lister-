@@ -100,8 +100,8 @@ app.get('/addSong', function(req, res){
         addToDatabase(number, videoID);
         return;
       });
+    }
     });
-  }
   }
 
   getSongUrl(songName, function(response){
