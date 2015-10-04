@@ -2,6 +2,12 @@ var TWILIO_SID, TWILIO_APP_ID, MONGO_DATABASE, YOUTUBE_API;
 var google = require('google');
 google.resultsPerPage = 2;
 var fs = require('fs');
+var GoogleSearch = require('google-search');
+var googleSearch = new GoogleSearch({
+  key: 'AIzaSyAhsmn1-SsD12eowR4dYzY4V4TPsJsP_TI',
+  cx: '013924013317681380050:mhj2yarvy-q'
+});
+
 var obj = JSON.parse(fs.readFileSync('./creds.json', 'utf8'));
 
 TWILIO_SID = obj.TWILIO_SID;
@@ -87,18 +93,13 @@ app.get('/addSong', function(req, res){
 });
 
 function getSong(lyric, callback){
-  var nextCounter = 0;
-  google(lyric + " site:http://www.azlyrics.com/", function (err, next, links){
-  if (err) console.error(err)
-
-  for (var i = 0; i < links.length; ++i) {
-    callback(links[i].title);
-  }
-
-  if (nextCounter < 1) {
-    nextCounter += 1
-    if (next) next()
-  }
+  googleSearch.build({
+  q: lyric,
+  lr: "lang_en",
+  num: 2, // Number of search results to return between 1 and 10, inclusive
+  siteSearch: "http://www.azlyrics.com/" // Restricts results to URLs from a specified site
+}, function(error, response) {
+  console.log(response);
 });
 }
 
