@@ -1,6 +1,7 @@
 var express = require('express');
 var client = require('twilio')('', '');
 var MongoClient = require("mongodb").MongoClient;
+var request = require('request');
 var app = express();
 var db;
 
@@ -14,7 +15,7 @@ var NUMBER  = "+17323336592";
 console.log("Running deploy test " + DEPLOY_TEST);
 
 //Open the connection to the database
-MongoClient.connect('mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database', function (err, database) {
+MongoClient.connect('mongodb://:@ds029224.mongolab.com:29224/plister-database', function (err, database) {
     if (err) {
         console.log("There was a problem trying to connect to the database " +
         "the application has bene terminated");
@@ -23,8 +24,8 @@ MongoClient.connect('mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/pl
       db = database;
         console.log("successfully connected to the database");
         //Simulate should crash the server, does not specify res value
-        console.log("simulating a test text");
-        simulate();
+        //console.log("simulating a test text");
+        //simulate();
     }
 });
 
@@ -54,9 +55,11 @@ app.get('/addSong', function(req, res){
   }
 
   console.log("adding " + songName);
-  var songURL = getSongUrl(songName);
-  addToDatabase(number, songURL);
-  res.send("Reponse Finished: With Success");
+  getSongUrl(songName, function(response){
+    var videoID = JSON.parse(response).items[0].id.videoId;
+    addToDatabase(number, videoID);
+    res.send("Reponse Finished: With Success");
+  });
 });
 
 //Send a message through twilio
@@ -84,8 +87,16 @@ function parseBody(body){
   return body.replace("add ", "");
 }
 
-function getSongUrl(searchTerm){
+function getSongUrl(searchTerm, callback){
+
+  console.log("searching");
   //Search for song using youtube api
+  request("https://www.googleapis.com/youtube/v3/search?part=id&q=" + searchTerm + "&type=video&key=", function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log(body);
+      callback(body);
+    }
+  })
 }
 
 function simulate(){
@@ -102,12 +113,19 @@ function simulate(){
   }
 
   console.log("adding " + songName);
-  var songURL = "https://www.youtube.com/watch?v=2HQaBWziYvY";
-  addToDatabase(number, songURL);
-  res.send("Reponse Finished: With Success");
+  getSongUrl(songName, function(response){
+    var videoID = JSON.parse(response).items[0].id.videoId;
+    addToDatabase(number, videoID);
+    res.send("Reponse Finished: With Success");
+  });
 }
 
 function addToDatabase(number, URL){
+  //Detect if song is already in the playlist
+  //if(db.collection('users').find({"phonenumber": {$eq: number}}, {$elemMatch: {"songs": URL}}).first() !== null){
+    //return;
+  //}
+
   if(db.collection('users').find({ "phoneNumber": { $eq : number } }).count() < 0){
     db.collection('users').insertOne({
       "phoneNumber": number,
