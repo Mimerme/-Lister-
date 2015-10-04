@@ -72,6 +72,7 @@ app.get('/addSong', function(req, res){
       return;
     }
     getSong(lyrics, function(reply){
+      console.log(reply);
       sendMessage(NUMBER, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
       getSongUrl(reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", ""),
       function(response){
