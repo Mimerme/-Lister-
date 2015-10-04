@@ -3,10 +3,14 @@ var client = require('twilio')('ACCOUNT_SID', 'AUTH_TOKEN');
 var db = require("mongodb").MongoClient;
 var app = express();
 
+//-r -D
 
+var DEPLOY_TEST = "3";
 var PORT = 3000;
 var API_KEY;
 var NUMBER  = "(732) 333-6592";
+
+console.log("Running deploy test " + DEPLOY_TEST);
 
 //Open the connection to the database
 db.connect('mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database', function (err, db) {
