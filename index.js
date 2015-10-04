@@ -1,25 +1,30 @@
 var express = require('express');
-var client = require('twilio')('ACCOUNT_SID', 'AUTH_TOKEN');
-var db = require("mongodb").MongoClient;
+var client = require('twilio')('', '');
+var MongoClient = require("mongodb").MongoClient;
 var app = express();
+var db;
 
 //-r -D
 
 var DEPLOY_TEST = "4";
 var PORT = 3000;
 var API_KEY;
-var NUMBER  = "(732) 333-6592";
+var NUMBER  = "+17323336592";
 
 console.log("Running deploy test " + DEPLOY_TEST);
 
 //Open the connection to the database
-db.connect('mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database', function (err, db) {
+MongoClient.connect('mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database', function (err, database) {
     if (err) {
         console.log("There was a problem trying to connect to the database " +
         "the application has bene terminated");
         throw err;
     } else {
+      db = database;
         console.log("successfully connected to the database");
+        //Simulate should crash the server, does not specify res value
+        console.log("simulating a test text");
+        simulate();
     }
 });
 
@@ -31,7 +36,7 @@ app.get('/', function (req, res){
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
-  res.send(db.users.find( { phoneNumber: { $eq : number } } ));
+  res.send(db.collection('users').find( { "phoneNumber": { $eq : number } } ));
 });
 
 //Adds song to mongodb server
@@ -64,7 +69,8 @@ function sendMessage(number, message){
 
 }, function(err, responseData) { //this function is executed when a response is received from Twilio
 
-    if (!err) {
+    if (err) {
+        console.log(err);
         console.log(responseData.from);
         console.log(responseData.body);
     }
@@ -82,13 +88,39 @@ function getSongUrl(searchTerm){
   //Search for song using youtube api
 }
 
+function simulate(){
+  var number = "+18482294098";
+  var text = "add darude sandstorm";
+
+  var songName = parseBody(text);
+  console.log(songName);
+
+  //Invalid syntax
+  if(songName == null){
+    sendMessage(number, "The syntax of your request was invalid");
+    return;
+  }
+
+  console.log("adding " + songName);
+  var songURL = "https://www.youtube.com/watch?v=2HQaBWziYvY";
+  addToDatabase(number, songURL);
+  res.send("Reponse Finished: With Success");
+}
+
 function addToDatabase(number, URL){
+  if(db.collection('users').find({ "phoneNumber": { $eq : number } }).count() < 0){
+    db.collection('users').insertOne({
+      "phoneNumber": number,
+      "songs": [URL]
+    });
+  }
+
   //Add the url with teh number to the song database
-  db.users.update({phoneNumber: { $eq: number }},
-    { $push: { songs: URL } }
-    ,{
-    upsert: true,
-    multi: false,
+  db.collection('users').update({"phoneNumber": { $eq: number }},
+    { $push: { "songs": URL } },
+    {
+      upsert: true,
+      multi: false,
   });
 }
 
