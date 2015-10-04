@@ -199,6 +199,11 @@ function addToDatabase(number, URL){
     return;
   }
 
+  if(URL === "A7JVDxN-Eck"){
+    console.log("no null");
+    return "";
+  }
+
   if(db.collection('users').find({ "phoneNumber": { $eq : number } }).count() < 0){
     db.collection('users').insertOne({
       "phoneNumber": number,
