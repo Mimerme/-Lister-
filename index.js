@@ -86,6 +86,8 @@ app.get('/addSong', function(req, res){
         sendMessage(number, "We weren't able to identify your song ;_;");
         return;
       }
+
+      if(typeof reply !== 'undefined' && reply){
       sendMessage(number, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
       var s = reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", "");
       if(s == null){
@@ -99,6 +101,7 @@ app.get('/addSong', function(req, res){
         return;
       });
     });
+  }
   }
 
   getSongUrl(songName, function(response){
