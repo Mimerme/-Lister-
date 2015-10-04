@@ -1,5 +1,6 @@
 var TWILIO_SID, TWILIO_APP_ID, MONGO_DATABASE, YOUTUBE_API;
-
+var google = require('google');
+google.resultsPerPage = 2;
 var fs = require('fs');
 var obj = JSON.parse(fs.readFileSync('./creds.json', 'utf8'));
 
@@ -17,7 +18,7 @@ var db;
 
 //-r -D
 
-var DEPLOY_TEST = "5";
+var DEPLOY_TEST = "6";
 var PORT = 3000;
 var API_KEY;
 var NUMBER  = "+17323336592";
@@ -59,20 +60,54 @@ app.get('/addSong', function(req, res){
   var text = req.query.Body;
 
   var songName = parseBody(text);
+  var lyrics = parseLyric(text);
 
   //Invalid syntax
   if(songName == null){
-    sendMessage(number, "The syntax of your request was invalid");
-    res.send("Reponse Finished: With Error by user");
+    if(lyrics == null){
+      sendMessage(number, "The syntax of your request was invalid");
+      res.send("Reponse Finished: With Error by user");
+    }
+    getSong(lyrics, function(reply){
+      sendMessage(NUMBER, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
+      getSongUrl(reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", ""),
+      function(response){
+        var videoID = JSON.parse(response).items[0].id.videoId;
+        addToDatabase(number, videoID);
+        res.send("Reponse Finished: With Success");
+      }));
+    });
   }
 
-  console.log("adding " + songName);
   getSongUrl(songName, function(response){
     var videoID = JSON.parse(response).items[0].id.videoId;
     addToDatabase(number, videoID);
     res.send("Reponse Finished: With Success");
   });
 });
+
+function getSong(lyric, callback){
+  var nextCounter = 0;
+  google(lyric + " site:http://www.azlyrics.com/", function (err, next, links){
+  if (err) console.error(err)
+
+  for (var i = 0; i < links.length; ++i) {
+    callback(links[i].title);
+  }
+
+  if (nextCounter < 1) {
+    nextCounter += 1
+    if (next) next()
+  }
+});
+}
+
+function parseLyric(body){
+  if(body.indexOf("lyric ") == -1){
+    return null;
+  }
+  return body.replace("lyric ", "");
+}
 
 //Send a message through twilio
 function sendMessage(number, message){
