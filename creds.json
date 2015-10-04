@@ -1,6 +1,0 @@
-{
-  "TWILIO_SID": "AC6fd09198f44c1894ab173976f25fdef2",
-  "TWILIO_APP_ID": "705cc92025d242c3437c43f9a26ab1a9",
-  "MONGO_DATABASE": "mongodb:\/\/Meme_Admin:meme123@ds029224.mongolab.com:29224\/plister-database",
-  "YOUTUBE_API": "AIzaSyAhsmn1-SsD12eowR4dYzY4V4TPsJsP_TI"
-}
