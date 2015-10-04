@@ -83,6 +83,9 @@ app.get('/addSong', function(req, res){
     }
     getSong(lyrics, function(reply){
       console.log(reply);
+      if(reply == -99){
+        sendMessage(number, "We weren't able to identify your song ;_;");
+      }
       sendMessage(number, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
       getSongUrl(reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", ""),
       function(response){
@@ -110,6 +113,9 @@ function getSong(lyric, callback){
   }
   // Got the response from custom search
   console.log('Result: ' + resp.searchInformation.formattedTotalResults);
+  if(resp.items.length <= 0){
+    callback(-99);
+  }
   if (resp.items && resp.items.length > 0) {
     callback(resp.items[0].title);
   }
