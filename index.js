@@ -86,7 +86,7 @@ app.get('/addSong', function(req, res){
 
   getSongUrl(songName, function(response){
     var videoID = JSON.parse(response).items[0].id.videoId;
-    sendMessage(number, songName + " has been added to your playlist");
+    sendMessage(number, "The song has been added to your playlist");
     addToDatabase(number, videoID);
     res.send("Reponse Finished: With Success");
     return;
