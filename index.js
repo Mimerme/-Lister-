@@ -119,12 +119,15 @@ function getSong(lyric, callback){
   }
   // Got the response from custom search
   console.log('Result: ' + resp.searchInformation.formattedTotalResults);
-  if(resp.items.length <= 0){
-    callback(-99);
-  }
+  console.log(resp.items);
+  if(typeof resp.items !== 'undefined' && resp.items){
   if (resp.items && resp.items.length > 0) {
     callback(resp.items[0].title);
   }
+}
+else{
+  callback(-99);
+}
 });
 }
 
