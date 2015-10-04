@@ -2,7 +2,7 @@ $(document).ready(function(){
     $(document).keypress(function(e) {
       var g = 0;
     if(e.which == 13) {
-      //reed was here
+
       console.log(searchtop);
 
 
@@ -17,10 +17,6 @@ $(document).ready(function(){
         },1000,function(){
           loader();
         })
-
-
-        /*
-          */
           loaddata();
     }
   });
@@ -39,38 +35,66 @@ function loader(){
     t = 1;
   }
 }
-function loaddata(){
-    var request = $.get("/fetch", {Phonenum:$("#Main_Searchbar").val()});
-        open_white_section()
-        finishedload("");
+
+
+function open_white_section(data){
+    var data_extracted = data;
+    $("#float_text").fadeOut("fast");
+    console.log(data_extracted);
+    console.log("Open White Section")
+    setTimeout(function(){$("#loading").fadeOut("slow",function(){
+        console.log("Starting")
+        $("#loading").remove();
+        var width = $(".title_sides").width()*2+$("#main_title").width()+20;
+        var height = $("html").height()-$("#main_container_container").height();
+        var htmlheight = $("html").height();
+        var ok = $("#main_container_container").height();
+        console.log(htmlheight)
+        $("#main_container").append("<div id='returned_data' style='border-radius:1em;position:relative;top:"+htmlheight+";background-color:#DDD1E1;width:"+width+";height:"+height+"'></div>")
+        $("#returned_data").animate({
+          top:$("#main_container_container").height()
+        },1000,function(){
+              setTimeout(function(){
+                for(var d = 0;d<data_extracted.length;d++){
+                  console.log(d);
+                  $.getJSON("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBs1MVxS8kIxL9BXrxYE0lfvDP-iF_cmeA&part=snippet&id="+data_extracted[d]+""),function(data2){
+                    console.log(data_extracted);
+                  };
+                  //data.items[0].snippet.title
+                  var xmlHttp = new XMLHttpRequest();
+                  xmlHttp.open( "GET", "https://www.googleapis.com/youtube/v3/videos?id="+data_extracted[d]+"&key=AIzaSyDSYIX0-yw_DM9QMxEG_TGCgYyezMAo9OM&fields=items(snippet(title))&part=snippet", false ); // false for synchronous request
+                  xmlHttp.send( null );
+                  var x = xmlHttp.responseText;
+                  var json_parsed = JSON.parse(x);
+                  console.log(json_parsed.items[0].snippet.title);
+                  add_data("https://www.youtube.com/watch?v="+data_extracted[d],"http://img.youtube.com/vi/"+data_extracted[d]+"/0.jpg",json_parsed.items[0].snippet.title);
+                }
+              });
+            });
+          });
+        });
       }
-
-function open_white_section(){
-  $("#loading").fadeOut("slow",function(){
-      $("#loading").remove();
-      var width = $(".title_sides").width()*2+$("#main_title").width()+20;
-      var height = $("html").height()-$("#main_container_container").height();
-      var htmlheight = $("html").height();
-      var ok = $("#main_container_container").height();
-      console.log(htmlheight)
-      $("#main_container").append("<div id='returned_data' style='border-radius:1em;position:relative;top:"+htmlheight+";background-color:#DDD1E1;width:"+width+";height:"+height+"'></div>")
-      $("#returned_data").animate({
-        top:$("#main_container_container").height()
-      },500);
+function finishedload(data){
+         console.log("Finished load")
+         setTimeout(function(){
+           open_white_section(data);
+         },1000)
+}
+function loaddata(){
+  console.log("load data");
+    $.get("http://45.79.147.243:3000/fetch", {phoneNum:$("#Main_Searchbar").val()},function(data){
+      console.log(data);
+      finishedload(data);
     });
-}
-function finishedload(){
-
-       var data_extracted = JSON.parse(data);
-       for(var d = 0;d<data_extracted.length();d++){
-          add_data("https://www.youtube.com/watch?v="+data_extracted[d],"http://img.youtube.com/vi/"+data_extracted[d]+"/0.jpg","");
-       }
-}
-
+  }
+var text_width;
 function add_data(url, imageurl, desc){
+  console.log("add_data")
+
   /*
     adddata("https://upload.wikimedia.org/wikipedia/commons/7/7c/Aspect_ratio_16_9_example.jpg","https://upload.wikimedia.org/wikipedia/commons/7/7c/Aspect_ratio_16_9_example.jpg","FUCK U")
     //http://img.youtube.com/vi/watch?v=c6wuh0NRG1s/0.jpg
   */
-    $("#returned_data").append("<a style='border-radius:1em;text-decoration:none' class='youtube_container' href='"+url+"'><img class='youtube_picture' src='"+imageurl+"'/><p style='background-color:#DDD1E1;color:black;'>"+desc+"</p></a>")
+    text_width = $('#returned_data').width()-320;
+    $("#returned_data").append("<a style='border-radius:1em;text-decoration:none; font-size: 25px;' class='youtube_container' href='"+url+"'><img class='youtube_picture' src='"+imageurl+"'/><p style='width:"+text_width+";font-family:Helvetica'>"+desc+"</p></a>")
 }
