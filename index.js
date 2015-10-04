@@ -5,7 +5,7 @@ var app = express();
 
 //-r -D
 
-var DEPLOY_TEST = "3";
+var DEPLOY_TEST = "4";
 var PORT = 3000;
 var API_KEY;
 var NUMBER  = "(732) 333-6592";
@@ -50,7 +50,7 @@ app.get('/addSong', function(req, res){
 
   console.log("adding " + songName);
   var songURL = getSongUrl(songName);
-  addToDatabase(From, songURL);
+  addToDatabase(number, songURL);
   res.send("Reponse Finished: With Success");
 });
 
