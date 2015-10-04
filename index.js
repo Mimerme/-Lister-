@@ -88,6 +88,7 @@ app.get('/addSong', function(req, res){
       sendMessage(number, "The song should be " + reply.replace(" - A-Z Lyrics", ""));
       getSongUrl(reply.replace(" - A-Z Lyrics", "").split("-")[1].replace(" ", ""),
       function(response){
+        console.log(response);
         var videoID = JSON.parse(response).items[0].id.videoId;
         addToDatabase(number, videoID);
         return;
