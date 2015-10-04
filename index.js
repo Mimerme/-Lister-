@@ -68,7 +68,7 @@ app.get('/fetch', function(req, res){
 //Adds song to mongodb server
 //Takes in phone number and song / search term
 app.get('/addSong', function(req, res){
-  var number = req.query.From;
+  var number = "1" + req.query.From;
   var text = req.query.Body;
 
   var songName = parseBody(text.toLowerCase());
@@ -182,9 +182,11 @@ function simulate(){
 
   console.log("adding " + songName);
   getSongUrl(songName, function(response){
+    if(JSON.parse(response).items.length > 0){
     var videoID = JSON.parse(response).items[0].id.videoId;
     addToDatabase(number, videoID);
     res.send("Reponse Finished: With Success");
+  }
   });
 }
 
