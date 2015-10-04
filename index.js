@@ -82,7 +82,6 @@ app.get('/addSong', function(req, res){
       return;
     }
     getSong(lyrics, function(reply){
-      console.log(reply);
       if(reply == -99){
         sendMessage(number, "We weren't able to identify your song ;_;");
       }
@@ -189,7 +188,7 @@ function addToDatabase(number, URL){
   //if(db.collection('users').find({"phonenumber": {$eq: number}}, {$elemMatch: {"songs": URL}}).first() !== null){
     //return;
   //}
-
+  console.log(URL);
   if(URL === null || URL === "null"){
     console.log("Null caught");
     return;
