@@ -1,12 +1,7 @@
 var TWILIO_SID, TWILIO_APP_ID, MONGO_DATABASE, YOUTUBE_API;
-var google = require('google');
-google.resultsPerPage = 2;
+var google = require('googleapis');
+var customsearch = google.customsearch('v1');
 var fs = require('fs');
-var GoogleSearch = require('google-search');
-var googleSearch = new GoogleSearch({
-  key: 'AIzaSyAhsmn1-SsD12eowR4dYzY4V4TPsJsP_TI',
-  cx: '013924013317681380050:mhj2yarvy-q'
-});
 
 var obj = JSON.parse(fs.readFileSync('./creds.json', 'utf8'));
 
@@ -44,6 +39,7 @@ MongoClient.connect(MONGO_DATABASE, function (err, database) {
         //console.log("simulating a test text");
         //simulate();
         //console.log(db.collection('users').findOne({"phoneNumber": "+18482294098"}));
+        //getSong("Im like hey whats up", function(){});
     }
 });
 
@@ -93,13 +89,16 @@ app.get('/addSong', function(req, res){
 });
 
 function getSong(lyric, callback){
-  googleSearch.build({
-  q: lyric,
-  lr: "lang_en",
-  num: 2, // Number of search results to return between 1 and 10, inclusive
-  siteSearch: "http://www.azlyrics.com/" // Restricts results to URLs from a specified site
-}, function(error, response) {
-  console.log(response);
+  customsearch.cse.list({ cx: '013924013317681380050:mhj2yarvy-q', q: lyric, auth: "AIzaSyAhsmn1-SsD12eowR4dYzY4V4TPsJsP_TI" }, function(err, resp) {
+  if (err) {
+    console.log('An error occured', err);
+    return;
+  }
+  // Got the response from custom search
+  console.log('Result: ' + resp.searchInformation.formattedTotalResults);
+  if (resp.items && resp.items.length > 0) {
+    callback(resp.items[0].title);
+  }
 });
 }
 
