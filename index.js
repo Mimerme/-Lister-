@@ -58,7 +58,7 @@ app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
   var s;
-  db.collection('users').find({"phoneNumber": "+" + number}).forEach(function(u) {
+  db.collection('users').find({"phoneNumber": "+1" + number}).forEach(function(u) {
      res.send(u.songs);
      return;
      });
@@ -68,7 +68,7 @@ app.get('/fetch', function(req, res){
 //Adds song to mongodb server
 //Takes in phone number and song / search term
 app.get('/addSong', function(req, res){
-  var number = "1" + req.query.From;
+  var number = req.query.From;
   var text = req.query.Body;
 
   var songName = parseBody(text.toLowerCase());
