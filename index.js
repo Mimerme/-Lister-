@@ -77,7 +77,6 @@ app.get('/addSong', function(req, res){
       function(response){
         var videoID = JSON.parse(response).items[0].id.videoId;
         addToDatabase(number, videoID);
-        res.send("Reponse Finished: With Success");
         return;
       });
     });
