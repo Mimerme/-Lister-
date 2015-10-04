@@ -56,10 +56,6 @@ app.use(function(req, res, next) {
 //Allows client to fetch for the request
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
-  if(db.collection('users').find({"phoneNumber": "+" + number}).count <= 0){
-    res.send("No user");
-    return;
-  }
   var number = req.query.phoneNum;
   var s;
   db.collection('users').find({"phoneNumber": "+" + number}).forEach(function(u) {
