@@ -48,6 +48,7 @@ app.get('/', function (req, res){
   res.send("There's nothing here, plz help");
 });
 
+//Allows client to fetch for the request
 app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
@@ -61,8 +62,8 @@ app.get('/addSong', function(req, res){
   var number = req.query.From;
   var text = req.query.Body;
 
-  var songName = parseBody(text);
-  var lyrics = parseLyric(text);
+  var songName = parseBody(text.toLowerCase());
+  var lyrics = parseLyric(text.toLowerCase());
 
   //Invalid syntax
   if(songName == null){
@@ -85,6 +86,7 @@ app.get('/addSong', function(req, res){
 
   getSongUrl(songName, function(response){
     var videoID = JSON.parse(response).items[0].id.videoId;
+    sendMessage(number, songName + " has been added to your playlist");
     addToDatabase(number, videoID);
     res.send("Reponse Finished: With Success");
     return;
