@@ -25,7 +25,7 @@ var NUMBER  = "+17323336592";
 console.log("Running deploy test " + DEPLOY_TEST);
 
 //Open the connection to the database
-MongoClient.connect("mongodb://Meme_Admin:meme123@ds029224.mongolab.com:29224/plister-database", function (err, database) {
+MongoClient.connect(MONGO_DATABASE, function (err, database) {
     if (err) {
         console.log("There was a problem trying to connect to the database " +
         "the application has bene terminated");
@@ -49,7 +49,7 @@ app.get('/fetch', function(req, res){
   //fetches all songs for the given url
   var number = req.query.phoneNum;
   var s;
-  db.collection('users').find({"phoneNumber": "+18482294098"}).forEach(function(u) {   res.send(u.songs); });
+  db.collection('users').find({"phoneNumber": number}).forEach(function(u) {   res.send(u.songs); });
 });
 
 //Adds song to mongodb server
@@ -100,9 +100,8 @@ function parseBody(body){
 }
 
 function getSongUrl(searchTerm, callback){
-  console.log("searching");
   //Search for song using youtube api
-  request("https://www.googleapis.com/youtube/v3/search?part=id&q=" + "darude" + "&type=video&key=" + "AIzaSyAhsmn1-SsD12eowR4dYzY4V4TPsJsP_TI", function (error, response, body) {
+  request("https://www.googleapis.com/youtube/v3/search?part=id&q=" + searchTerm + "&type=video&key=" + YOUTUBE_API, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       callback(body);
     }
